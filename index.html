@@ -24,7 +24,8 @@
     <script>
       let myDestinations = [];
       // display.innerHTML = myDestinations.join('<BR>')
-      const HOST = "http://127.0.0.1:5000";
+      // const HOST = "http://127.0.0.1:5000";
+      const HOST = "https://library-back-end-j4i1.onrender.com";
       async function deleteDestination(destinationID) {
         const response = await axios.delete(`${HOST}/${destinationID}`);
         alert("delete succesfuly");
