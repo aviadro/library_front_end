@@ -10,16 +10,16 @@
     />
     <style>
       .book-image {
-    width: 100px;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 10;
-  }
+        width: 100px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 10;
+      }
 
-  body {
-    padding-top: 20px; /* Adjusted to prevent overlap with the image */
-  }
+      body {
+        padding-top: 20px; /* Adjusted to prevent overlap with the image */
+      }
     </style>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -40,20 +40,20 @@
       <h1 class="text-center"><i>Underline</i>- online Library</h1>
       <hr />
 
-      <!-- Main content from index.html -->
+      <!-- Main content -->
       <main>
         <div>
           title<input id="newTitle" /> author<input id="newAuthor" /> published year<input
             id="newPublishedYear"
           />
           Image<input id="newImage" />
-          <button onclick="addDestination()">Add</button>
+          <button onclick="addBook()">Add</button>
           <br /><br />
-              <!-- Search input -->
-        <div class="mb-4">
-          <input type="text" id="searchQuery" class="form-control" placeholder="Search for books..." />
-          <button class="btn btn-primary mt-2" onclick="searchBooks()">Search</button>
-        </div>
+          <!-- Search input -->
+          <div class="mb-4">
+            <input type="text" id="searchQuery" class="form-control" placeholder="Search for books..." />
+            <button class="btn btn-primary mt-2" onclick="searchBooks()">Search</button>
+          </div>
           
           <div id="display" class="card-group"></div>
         </div>
@@ -69,107 +69,105 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-      let myDestinations = []
-      const HOST = 'https://library-back-end-j4i1.onrender.com'
+      let myBooks = [];
+      const HOST = 'https://library-back-end-j4i1.onrender.com';
 
-      async function deleteDestination(destinationID) {
-        const response = await axios.delete(`${HOST}/${destinationID}`)
-        alert('Deleted successfully')
-        displayDestinations()
+      async function deleteBook(bookID) {
+        const response = await axios.delete(`${HOST}/${bookID}`);
+        alert('Deleted successfully');
+        displayBooks();
       }
       
+      async function addBook() {
+        let newBook = {
+            title: newTitle.value,
+            author: newAuthor.value,
+            published_year: newPublishedYear.value,
+            image_url: newImage.value,
+            available: true,
+        };
 
-      async function addDestination() {
-    let newDestination = {
-        title: newTitle.value,
-        author: newAuthor.value,
-        published_year: newPublishedYear.value,
-        image_url: newImage.value,
-        available: true,
-    };
-
-    try {
-        const response = await axios.post(HOST, newDestination);
-        console.log('Added successfully');
-        console.log(response.data);  // Log the current books array
-        getDestinations(); // Refresh the list after adding
-    } catch (error) {
-        console.error('Error adding destination:', error);
-        alert('Failed to add destination');
-    }
-}
-
-async function editDestination(index) {
-    // Get the destination (book) that needs to be edited based on the index
-    const destination = myDestinations[index];
-    
-    // Create the updated destination object with conditional checks
-    const updatedDestination = {
-        title: newTitle.value.trim() !== '' ? newTitle.value : destination.title,
-        author: newAuthor.value.trim() !== '' ? newAuthor.value : destination.author,
-        published_year: newPublishedYear.value.trim() !== '' ? newPublishedYear.value : destination.published_year,
-        image_url: newImage.value.trim() !== '' ? newImage.value : destination.image_url,
-        available: destination.available  // Keep the availability status unchanged
-    };
-
-    try {
-        // Send the PUT request to update the book
-        const response = await axios.put(`${HOST}/${destination.id}`, updatedDestination);
-        console.log('Updated successfully');
-        console.log(response.data);  // Log the updated book details
-        getDestinations();  // Refresh the list after editing
-    } catch (error) {
-        console.error('Error updating destination:', error);
-        alert('Failed to update destination');
-    }
-  }
-
-    // Function to search books
-    async function searchBooks() {
-      const query = document.getElementById('searchQuery').value.trim().toLowerCase();
-      if (query === '') {
-        await getDestinations(); // Refresh the list if search query is empty
-      } else {
-        const response = await axios.get(`${HOST}?search=${query}`);
-        myDestinations = response.data;
-        displayDestinations();
-      }
-    }
-
-
-      getDestinations()
-      async function getDestinations() {
-        const response = await axios.get(`${HOST}`)
-        myDestinations = response.data
-        displayDestinations()
+        try {
+            const response = await axios.post(HOST, newBook);
+            console.log('Added successfully');
+            console.log(response.data);  // Log the current books array
+            getBooks(); // Refresh the list after adding
+        } catch (error) {
+            console.error('Error adding book:', error);
+            alert('Failed to add book');
+        }
       }
 
-      function displayDestinations() {
-        let finalStr = ''
-        const defaultImageUrl = 'https://lh4.googleusercontent.com/proxy/hbnD1n-NUmkNpMo4tNhy8ekGWzO1rYrF_YSv5ulws2LdX_MuILQ94wohLnf0LkhbkjH6Do_QsFBLQ_dxgX9uK8Rm6VYthI5NWy73yp3hkjEvJp_DipwtFdYZEjoenKxSZQ'
+      async function editBook(index) {
+        // Get the book that needs to be edited based on the index
+        const book = myBooks[index];
+        
+        // Create the updated book object with conditional checks
+        const updatedBook = {
+            title: newTitle.value.trim() !== '' ? newTitle.value : book.title,
+            author: newAuthor.value.trim() !== '' ? newAuthor.value : book.author,
+            published_year: newPublishedYear.value.trim() !== '' ? newPublishedYear.value : book.published_year,
+            image_url: newImage.value.trim() !== '' ? newImage.value : book.image_url,
+            available: book.available  // Keep the availability status unchanged
+        };
+
+        try {
+            // Send the PUT request to update the book
+            const response = await axios.put(`${HOST}/${book.id}`, updatedBook);
+            console.log('Updated successfully');
+            console.log(response.data);  // Log the updated book details
+            getBooks();  // Refresh the list after editing
+        } catch (error) {
+            console.error('Error updating book:', error);
+            alert('Failed to update book');
+        }
+      }
+
+      // Function to search books
+      async function searchBooks() {
+        const query = document.getElementById('searchQuery').value.trim().toLowerCase();
+        if (query === '') {
+          await getBooks(); // Refresh the list if search query is empty
+        } else {
+          const response = await axios.get(`${HOST}?search=${query}`);
+          myBooks = response.data;
+          displayBooks();
+        }
+      }
+
+      getBooks();
+      async function getBooks() {
+        const response = await axios.get(`${HOST}`);
+        myBooks = response.data;
+        displayBooks();
+      }
+
+      function displayBooks() {
+        let finalStr = '';
+        const defaultImageUrl = 'https://lh4.googleusercontent.com/proxy/hbnD1n-NUmkNpMo4tNhy8ekGWzO1rYrF_YSv5ulws2LdX_MuILQ94wohLnf0LkhbkjH6Do_QsFBLQ_dxgX9uK8Rm6VYthI5NWy73yp3hkjEvJp_DipwtFdYZEjoenKxSZQ';
        
-        for (let i = 0; i < myDestinations.length; i++) {
-          const destination = myDestinations[i];
-          const imageUrl = destination.image_url ? destination.image_url : defaultImageUrl;
-          const isAvailable = destination.available;
-         const availabilityText = isAvailable ? 'Available' : 'Not Available';
+        for (let i = 0; i < myBooks.length; i++) {
+          const book = myBooks[i];
+          const imageUrl = book.image_url ? book.image_url : defaultImageUrl;
+          const isAvailable = book.available;
+          const availabilityText = isAvailable ? 'Available' : 'Not Available';
           const availabilityClass = isAvailable ? 'text-success' : 'text-danger';  // Bootstrap classes for color
-          const destinationStr = `
+          const bookStr = `
             <div class="col">
                 <div class="card" style="width: 18rem;max-width: 200px;">
                     <img src="${imageUrl}" class="card-img-top" alt="Book Image">
                     <div class="card-body">
-                        <h5 class="card-title">${destination.title} - ${destination.author}</h5>
-                        <p class="card-text">published- - ${destination.published_year}</p>
+                        <h5 class="card-title">${book.title} - ${book.author}</h5>
+                        <p class="card-text">Published Year - ${book.published_year}</p>
                         <p class="card-text ${availabilityClass}">${availabilityText}</p>
-                        <button class="btn btn-danger" onclick="deleteDestination('${destination.id}')">Delete</button>
-                        <button class="btn btn-primary" onclick="editDestination(${i})">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteBook('${book.id}')">Delete</button>
+                        <button class="btn btn-primary" onclick="editBook(${i})">Edit</button>
                     </div>
                 </div>
-            </div>`
-          finalStr = finalStr + destinationStr
+            </div>`;
+          finalStr += bookStr;
         }
-        display.innerHTML = finalStr
+        display.innerHTML = finalStr;
       }
     </script>
   </body>
