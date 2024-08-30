@@ -54,9 +54,22 @@
             <input type="text" id="searchQuery" class="form-control" placeholder="Search for books..." />
             <button class="btn btn-primary mt-2" onclick="searchBooks()">Search</button>
           </div>
-          
+          <div>
+            <h2>Loan a Book</h2>
+            <label for="loanBook">Book</label>
+            <select id="loanBook"></select>
+            <label for="loanMember">Member</label>
+            <select id="loanMember"></select>
+            <label for="loanDate">Loan Date</label>
+            <input type="date" id="loanDate" />
+            <label for="dueDate">Due Date</label>
+            <input type="date" id="dueDate" />
+            <button onclick="loanBook()">Loan Book</button>
+          </div>
+          <h2>The books:</h2>  
           <div id="display" class="card-group"></div>
         </div>
+        
       </main>
       <!-- End of main content -->
 
@@ -169,6 +182,63 @@
         }
         display.innerHTML = finalStr;
       }
+
+      async function loanBook() {
+        const bookId = document.getElementById('loanBook').value;
+        const memberId = document.getElementById('loanMember').value;
+        const loanDate = document.getElementById('loanDate').value;
+        const dueDate = document.getElementById('dueDate').value;
+
+        try {
+          const response = await axios.post(`${HOST}/loan`, {
+            book_id: bookId,
+            member_id: memberId,
+            loan_date: loanDate,
+            due_date: dueDate
+          });
+          alert('Book loaned successfully');
+          getDestinations(); // Refresh the list to reflect changes
+        } catch (error) {
+          console.error('Error loaning book:', error);
+          alert('Failed to loan book');
+        }
+      }
+
+      async function populateDropdowns() {
+        try {
+          const [booksResponse, membersResponse] = await Promise.all([
+              axios.get(`${HOST}/`).catch(error => console.error("Books API error:", error)),
+              axios.get(`${HOST}/members`).catch(error => console.error("Members API error:", error))
+            ]);
+
+          const books = booksResponse.data;
+          const members = membersResponse.data;
+
+          const bookSelect = document.getElementById('loanBook');
+          const memberSelect = document.getElementById('loanMember');
+
+          books.forEach(book => {
+            const option = document.createElement('option');
+            option.value = book.id;
+            option.textContent = book.title;
+            bookSelect.appendChild(option);
+          });
+
+          members.forEach(member => {
+            const option = document.createElement('option');
+            option.value = member.id;
+            option.textContent = member.name;
+            memberSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error('Error populating dropdowns:', error);
+        }
+      }
+
+      // Call this function on page load or whenever necessary
+      populateDropdowns();
+
+
     </script>
   </body>
 </html>
