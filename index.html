@@ -151,7 +151,9 @@ async function editDestination(index) {
         for (let i = 0; i < myDestinations.length; i++) {
           const destination = myDestinations[i];
           const imageUrl = destination.image_url ? destination.image_url : defaultImageUrl;
-
+          const isAvailable = destination.available;
+         const availabilityText = isAvailable ? 'Available' : 'Not Available';
+          const availabilityClass = isAvailable ? 'text-success' : 'text-danger';  // Bootstrap classes for color
           const destinationStr = `
             <div class="col">
                 <div class="card" style="width: 18rem;max-width: 200px;">
@@ -159,7 +161,7 @@ async function editDestination(index) {
                     <div class="card-body">
                         <h5 class="card-title">${destination.title} - ${destination.author}</h5>
                         <p class="card-text">published- - ${destination.published_year}</p>
-                        <p class="card-text">Available? - ${destination.available}</p>
+                        <p class="card-text ${availabilityClass}">${availabilityText}</p>
                         <button class="btn btn-danger" onclick="deleteDestination('${destination.id}')">Delete</button>
                         <button class="btn btn-primary" onclick="editDestination(${i})">Edit</button>
                     </div>
