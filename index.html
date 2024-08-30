@@ -91,6 +91,8 @@
         displayBooks();
       }
       
+      
+      
       async function addBook() {
         let newBook = {
             title: newTitle.value,
@@ -138,15 +140,27 @@
 
       // Function to search books
       async function searchBooks() {
-        const query = document.getElementById('searchQuery').value.trim().toLowerCase();
-        if (query === '') {
-          await getBooks(); // Refresh the list if search query is empty
-        } else {
-          const response = await axios.get(`${HOST}?search=${query}`);
-          myBooks = response.data;
-          displayBooks();
-        }
+          const query = document.getElementById('searchQuery').value.trim().toLowerCase();
+          const bookSelect = document.getElementById('loanBook');
+          bookSelect.innerHTML = ''; // Clear the existing options
+
+          if (query === '') {
+              await getBooks(); // Refresh the list if search query is empty
+          } else {
+              const response = await axios.get(`${HOST}?search=${query}`);
+              myBooks = response.data;
+              displayBooks();
+          }
+
+          // Populate the loanBook dropdown with the search results (or all books if no query)
+          myBooks.forEach(book => {
+              const option = document.createElement('option');
+              option.value = book.id;
+              option.textContent = book.title;
+              bookSelect.appendChild(option);
+          });
       }
+
 
       getBooks();
       async function getBooks() {
