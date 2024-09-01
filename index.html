@@ -73,10 +73,10 @@
       </main>
       <!-- End of main content -->
 
-      <div class="text-center mt-4">
+      <!-- <div class="text-center mt-4">
         <a href="/" class="btn btn-secondary">Return to Main Menu</a>
       </div>
-    </div>
+    </div> -->
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
@@ -88,7 +88,7 @@
       async function deleteBook(bookID) {
         const response = await axios.delete(`${HOST}/${bookID}`);
         alert('Deleted successfully');
-        displayBooks();
+        getBooks();
       }
       
       
@@ -104,6 +104,7 @@
 
         try {
             const response = await axios.post(HOST, newBook);
+            alert('Added successfully');
             console.log('Added successfully');
             console.log(response.data);  // Log the current books array
             getBooks(); // Refresh the list after adding
