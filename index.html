@@ -66,6 +66,14 @@
             <input type="date" id="dueDate" />
             <button onclick="loanBook()">Loan Book</button>
           </div>
+
+          <h2>Return a Book</h2>
+          <label for="returnBook">Book</label>
+          <select id="returnBook"></select>
+          <label for="returnMember">Member</label>
+          <select id="returnMember"></select>
+          <button onclick="returnBook()">Return Book</button>
+          
           <h2>The books:</h2>  
           <div id="display" class="card-group"></div>
         </div>
@@ -252,6 +260,59 @@
 
       // Call this function on page load or whenever necessary
       populateDropdowns();
+
+      async function returnBook() {
+          const bookId = document.getElementById('returnBook').value;
+          const memberId = document.getElementById('returnMember').value;
+
+          try {
+              const response = await axios.post(`${HOST}/return`, {
+                  book_id: bookId,
+                  member_id: memberId
+              });
+              alert('Book returned successfully');
+              getBooks(); // Refresh the list to reflect changes
+          } catch (error) {
+              console.error('Error returning book:', error);
+              alert('Failed to return book');
+          }
+      }
+
+      async function populateReturnDropdowns() {
+          try {
+              const [booksResponse, membersResponse] = await Promise.all([
+                  axios.get(`${HOST}/`).catch(error => console.error("Books API error:", error)),
+                  axios.get(`${HOST}/members`).catch(error => console.error("Members API error:", error))
+              ]);
+
+              const books = booksResponse.data;
+              const members = membersResponse.data;
+
+              const returnBookSelect = document.getElementById('returnBook');
+              const returnMemberSelect = document.getElementById('returnMember');
+
+              books.forEach(book => {
+                  if (!book.available) { // Only show borrowed books
+                      const option = document.createElement('option');
+                      option.value = book.id;
+                      option.textContent = book.title;
+                      returnBookSelect.appendChild(option);
+                  }
+              });
+
+              members.forEach(member => {
+                  const option = document.createElement('option');
+                  option.value = member.id;
+                  option.textContent = member.name;
+                  returnMemberSelect.appendChild(option);
+              });
+          } catch (error) {
+              console.error('Error populating return dropdowns:', error);
+          }
+      }
+
+  // Call this function on page load or whenever necessary
+  populateReturnDropdowns();
 
 
     </script>
