@@ -279,58 +279,58 @@
       }
 
       async function populateReturnDropdowns() {
-    try {
-        const booksResponse = await axios.get(`${HOST}/`);
-        const books = booksResponse.data;
+          try {
+              const booksResponse = await axios.get(`${HOST}/`);
+              const books = booksResponse.data;
 
-        const returnBookSelect = document.getElementById('returnBook');
-        const returnMemberSelect = document.getElementById('returnMember');
+              const returnBookSelect = document.getElementById('returnBook');
+              const returnMemberSelect = document.getElementById('returnMember');
 
-        // Clear previous options
-        returnBookSelect.innerHTML = '';
-        returnMemberSelect.innerHTML = '';
+              // Clear previous options
+              returnBookSelect.innerHTML = '';
+              returnMemberSelect.innerHTML = '';
 
-        books.forEach(book => {
-            if (!book.available) { // Only show borrowed books
-                const option = document.createElement('option');
-                option.value = book.id;
-                option.textContent = book.title;
-                returnBookSelect.appendChild(option);
-            }
-        });
+              books.forEach(book => {
+                  if (!book.available) { // Only show borrowed books
+                      const option = document.createElement('option');
+                      option.value = book.id;
+                      option.textContent = book.title;
+                      returnBookSelect.appendChild(option);
+                  }
+              });
 
-        // Add event listener for book selection to fetch the corresponding member
-        returnBookSelect.addEventListener('change', async function() {
-            const selectedBookId = this.value;
+              // Add event listener for book selection to fetch the corresponding member
+              returnBookSelect.addEventListener('change', async function() {
+                  const selectedBookId = this.value;
 
-            if (selectedBookId) {
-                try {
-                    const memberResponse = await axios.get(`${HOST}/loan/${selectedBookId}`);
-                    const member = memberResponse.data;
+                  if (selectedBookId) {
+                      try {
+                          const memberResponse = await axios.get(`${HOST}/loan/${selectedBookId}`);
+                          const member = memberResponse.data;
 
-                    returnMemberSelect.innerHTML = ''; // Clear previous options
+                          returnMemberSelect.innerHTML = ''; // Clear previous options
 
-                    const option = document.createElement('option');
-                    option.value = member.member_id;
-                    option.textContent = member.name;
-                    returnMemberSelect.appendChild(option);
+                          const option = document.createElement('option');
+                          option.value = member.member_id;
+                          option.textContent = member.name;
+                          returnMemberSelect.appendChild(option);
 
-                } catch (error) {
-                    console.error('Error fetching loan member:', error);
-                    returnMemberSelect.innerHTML = ''; // Clear member options if there's an error
-                }
-            }
-        });
+                      } catch (error) {
+                          console.error('Error fetching loan member:', error);
+                          returnMemberSelect.innerHTML = ''; // Clear member options if there's an error
+                      }
+                  }
+              });
 
-        // Optionally, trigger the event listener for the first book in the list
-        if (returnBookSelect.options.length > 0) {
-            returnBookSelect.dispatchEvent(new Event('change'));
-        }
+              // Optionally, trigger the event listener for the first book in the list
+              if (returnBookSelect.options.length > 0) {
+                  returnBookSelect.dispatchEvent(new Event('change'));
+              }
 
-    } catch (error) {
-        console.error('Error populating return dropdowns:', error);
-    }
-}
+          } catch (error) {
+              console.error('Error populating return dropdowns:', error);
+          }
+      }
 
 
   // Call this function on page load or whenever necessary
